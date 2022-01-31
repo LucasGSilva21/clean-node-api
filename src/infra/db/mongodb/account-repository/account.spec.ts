@@ -12,7 +12,6 @@ describe('Account Mongo Repository', () => {
 
   beforeEach(async () => {
     const accountCollection = await MongoHelper.getCollection('accounts')
-
     await accountCollection.deleteMany({})
   })
 
@@ -22,13 +21,11 @@ describe('Account Mongo Repository', () => {
 
   test('Should return an account on success', async () => {
     const sut = makeSut()
-
     const isValid = await sut.add({
       name: 'any_name',
       email: 'any_email@mail.com',
       password: 'any_password'
     })
-
     expect(isValid).toBe(true)
   })
 })
