@@ -16,5 +16,10 @@ export const MongoHelper = {
 
   async getCollection (name: string): Promise<Collection> {
     return this.client.db().collection(name)
+  },
+
+  map: (data: any): any => {
+    const { _id, ...rest } = data
+    return { ...rest, id: _id.toHexString() }
   }
 }
