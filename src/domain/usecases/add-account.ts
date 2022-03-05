@@ -5,5 +5,5 @@ export interface AddAccountModel {
 }
 
 export interface AddAccount {
-  add (account: AddAccountModel): Promise<boolean>
+  add (account: AddAccountModel): Promise<boolean | null>
 }
