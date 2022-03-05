@@ -14,9 +14,9 @@ services:
     build: node:12
     working_dir: /usr/src/clean-ts-api
     restart: always
-    command: bash -c "npm run debug && npm install --only=prod"
+    command: bash -c "npm run debug && npm install"
     volumes:
-      - ./dist:/usr/src/clean-ts-api/dist
+      - ./dist/:/usr/src/clean-ts-api/dist/
       - ./package.json:/usr/src/clean-ts-api/package.json
     ports:
       - "3333:3333"
