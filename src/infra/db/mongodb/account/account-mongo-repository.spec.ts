@@ -74,7 +74,7 @@ describe('Account Mongo Repository', () => {
     })
   })
 
-  describe('loadByEmail()', () => {
+  describe('loadByToken()', () => {
     test('Should return an account on loadByToken without role', async () => {
       const sut = makeSut()
       await accountCollection.insertOne({
