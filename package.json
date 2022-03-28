@@ -17,7 +17,7 @@
     "test:integration": "npm test -- --watch -c jest-integration-config.js",
     "test:staged": "npm test -- --findRelatedTests",
     "test:ci": "npm test -- --coverage",
-    "test:coveralls": "npm test -- --coverage",
+    "test:coveralls": "npm run test:ci && cat ./coverage/lcov.info | coveralls",
     "prepare": "husky install"
   },
   "keywords": [],
@@ -44,7 +44,6 @@
     "husky": "^7.0.2",
     "jest": "^27.1.0",
     "lint-staged": "^11.1.2",
-    "mockdate": "^3.0.5",
     "nodemon": "^2.0.15",
     "rimraf": "^3.0.2",
     "supertest": "^6.1.6",
