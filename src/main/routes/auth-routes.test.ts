@@ -1,7 +1,7 @@
 import request from 'supertest'
 import { Express } from 'express'
-import { setupApp } from '../config/app'
-import { MongoHelper } from '../../infra/db/mongodb/helpers/mongo-helper'
+import { setupApp } from '@/main/config/app'
+import { MongoHelper } from '@/infra/db/mongodb/helpers/mongo-helper'
 import { Collection } from 'mongodb'
 import { hash } from 'bcrypt'
 
