@@ -10,6 +10,25 @@ let surveyCollection: Collection
 let accountCollection: Collection
 let app: Express
 
+const makeAccessToken = async (): Promise<string> => {
+  const res = await accountCollection.insertOne({
+    name: 'valid_name',
+    email: 'valid_email@mail.com',
+    password: '123',
+    role: 'admin'
+  })
+  const id = res.insertedId
+  const accessToken = sign({ id }, env.jwtSecret)
+  await accountCollection.updateOne({
+    _id: id
+  }, {
+    $set: {
+      accessToken
+    }
+  })
+  return accessToken
+}
+
 describe('Auth Routes', () => {
   beforeAll(async () => {
     app = await setupApp()
@@ -44,21 +63,7 @@ describe('Auth Routes', () => {
     })
 
     test('Should return 204 on add survey with valid accessToken', async () => {
-      const res = await accountCollection.insertOne({
-        name: 'valid_name',
-        email: 'valid_email@mail.com',
-        password: '123',
-        role: 'admin'
-      })
-      const id = res.insertedId
-      const accessToken = sign({ id }, env.jwtSecret)
-      await accountCollection.updateOne({
-        _id: id
-      }, {
-        $set: {
-          accessToken
-        }
-      })
+      const accessToken = await makeAccessToken()
       await request(app)
         .post('/api/surveys')
         .set('x-access-token', accessToken)
@@ -83,20 +88,7 @@ describe('Auth Routes', () => {
     })
 
     test('Should return 200 on load surveys with valid accessToken', async () => {
-      const res = await accountCollection.insertOne({
-        name: 'valid_name',
-        email: 'valid_email@mail.com',
-        password: '123'
-      })
-      const id = res.insertedId
-      const accessToken = sign({ id }, env.jwtSecret)
-      await accountCollection.updateOne({
-        _id: id
-      }, {
-        $set: {
-          accessToken
-        }
-      })
+      const accessToken = await makeAccessToken()
       await surveyCollection.insertMany([{
         question: 'any_question',
         answers: [{
