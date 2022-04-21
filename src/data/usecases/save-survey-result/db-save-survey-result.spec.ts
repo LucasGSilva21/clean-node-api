@@ -1,4 +1,4 @@
-import { SaveSurveyResultRepository, SaveSurveyResultModel, SurveyResultModel } from '@/data/usecases/save-survey-result/db-save-survey-result-protocols'
+import { SaveSurveyResultRepository, SaveSurveyResultModel, SurveyResultModel, LoadSurveyResultRepository } from '@/data/usecases/save-survey-result/db-save-survey-result-protocols'
 import { DbSaveSurveyResult } from './db-save-survey-result'
 import MockDate from 'mockdate'
 
@@ -15,11 +15,20 @@ const makeSurveyResult = (): SurveyResultModel => Object.assign({}, makeSurveyRe
 
 const makeSaveSurveyResultRepository = (): SaveSurveyResultRepository => {
   class SaveSurveyResultRepositoryStub implements SaveSurveyResultRepository {
-    async save (data: SaveSurveyResultModel): Promise<SurveyResultModel> {
-      return new Promise(resolve => resolve(makeSurveyResult()))
+    async save (data: SaveSurveyResultModel): Promise<void> {
+      return new Promise(resolve => resolve())
     }
   }
   return new SaveSurveyResultRepositoryStub()
+}
+
+const makeLoadSurveyResultRepository = (): LoadSurveyResultRepository => {
+  class LoadSurveyResultRepositoryStub implements LoadSurveyResultRepository {
+    async loadBySurveyId (surveyId: string, accountId: string): Promise<SurveyResultModel> {
+      return new Promise(resolve => resolve(makeSurveyResult()))
+    }
+  }
+  return new LoadSurveyResultRepositoryStub()
 }
 
 type SutTypes = {
@@ -29,7 +38,8 @@ type SutTypes = {
 
 const makeSut = (): SutTypes => {
   const saveSurveyResultRepositoryStub = makeSaveSurveyResultRepository()
-  const sut = new DbSaveSurveyResult(saveSurveyResultRepositoryStub)
+  const loadSurveyResultRepositoryStub = makeLoadSurveyResultRepository()
+  const sut = new DbSaveSurveyResult(saveSurveyResultRepositoryStub, loadSurveyResultRepositoryStub)
   return {
     sut,
     saveSurveyResultRepositoryStub
