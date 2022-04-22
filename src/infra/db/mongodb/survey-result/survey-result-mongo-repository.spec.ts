@@ -69,5 +69,30 @@ describe('Survey Mongo Repository', () => {
       })
       expect(surveyResult).toBeTruthy()
     })
+
+    test('Should update survey result if its not new', async () => {
+      const surveyId = await makeSurvey()
+      const accountId = await makeAccount()
+      await surveyResultCollection.insertOne({
+        surveyId: ObjectId.createFromHexString(surveyId),
+        accountId: ObjectId.createFromHexString(accountId),
+        answer: 'any_answer',
+        date: new Date()
+      })
+      const sut = makeSut()
+      await sut.save({
+        surveyId,
+        accountId,
+        answer: 'other_answer',
+        date: new Date()
+      })
+      const surveyResult = await surveyResultCollection.find({
+        surveyId: ObjectId.createFromHexString(surveyId),
+        accountId: ObjectId.createFromHexString(accountId)
+      }).toArray()
+      expect(surveyResult).toBeTruthy()
+      expect(surveyResult.length).toBe(1)
+      expect(surveyResult[0].answer).toBe('other_answer')
+    })
   })
 })
