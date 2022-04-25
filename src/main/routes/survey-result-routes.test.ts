@@ -3,10 +3,30 @@ import { Express } from 'express'
 import { setupApp } from '@/main/config/app'
 import { MongoHelper } from '@/infra/db/mongodb/helpers/mongo-helper'
 import { Collection } from 'mongodb'
+import { sign } from 'jsonwebtoken'
+import env from '@/main/config/env'
 
 let surveyCollection: Collection
 let accountCollection: Collection
 let app: Express
+
+const makeAccessToken = async (): Promise<string> => {
+  const res = await accountCollection.insertOne({
+    name: 'valid_name',
+    email: 'valid_email@mail.com',
+    password: '123'
+  })
+  const id = res.insertedId
+  const accessToken = sign({ id }, env.jwtSecret)
+  await accountCollection.updateOne({
+    _id: id
+  }, {
+    $set: {
+      accessToken
+    }
+  })
+  return accessToken
+}
 
 describe('Survey Result Routes', () => {
   beforeAll(async () => {
@@ -33,6 +53,26 @@ describe('Survey Result Routes', () => {
           answer: 'any_answer'
         })
         .expect(403)
+    })
+
+    test('Should return 200 on save survey result with accessToken', async () => {
+      const res = await surveyCollection.insertOne({
+        question: 'any_question',
+        answers: [{
+          image: 'any_image',
+          answer: 'any_answer'
+        }],
+        date: new Date()
+      })
+      const id = res.insertedId.toHexString()
+      const accessToken = await makeAccessToken()
+      await request(app)
+        .put(`/api/surveys/${id}/results`)
+        .set('x-access-token', accessToken)
+        .send({
+          answer: 'any_answer'
+        })
+        .expect(200)
     })
   })
 })
