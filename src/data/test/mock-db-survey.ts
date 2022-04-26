@@ -1,4 +1,4 @@
-import { AddSurveyModel } from '@/domain/usecases/survey/add-survey'
+import { AddSurveyParams } from '@/domain/usecases/survey/add-survey'
 import { SurveyModel } from '@/domain/models/survey'
 import { mockSurveyModel, mockSurveysModels } from '@/domain/test'
 import { AddSurveyRepository } from '@/data/protocols/db/survey/add-survey-repository'
@@ -7,7 +7,7 @@ import { LoadSurveysRepository } from '@/data/protocols/db/survey/load-surveys-r
 
 export const mockAddSurveyRepository = (): AddSurveyRepository => {
   class AddSurveyRepositoryStub implements AddSurveyRepository {
-    async add (surveyData: AddSurveyModel): Promise<void> {
+    async add (surveyData: AddSurveyParams): Promise<void> {
       return new Promise(resolve => resolve())
     }
   }
