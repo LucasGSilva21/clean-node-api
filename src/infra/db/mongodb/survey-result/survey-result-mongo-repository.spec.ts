@@ -16,9 +16,11 @@ const makeSurvey = async (): Promise<string> => {
     answers: [
       {
         image: 'any_image',
-        answer: 'any_answer'
+        answer: 'any_answer_1'
       }, {
-        answer: 'other_answer'
+        answer: 'any_answer_2'
+      }, {
+        answer: 'any_answer_3'
       }
     ],
     date: new Date()
@@ -93,6 +95,43 @@ describe('Survey Mongo Repository', () => {
       expect(surveyResult).toBeTruthy()
       expect(surveyResult.length).toBe(1)
       expect(surveyResult[0].answer).toBe('other_answer')
+    })
+  })
+
+  describe('loadBySurveyId()', () => {
+    test('Should load survey result', async () => {
+      const surveyId = await makeSurvey()
+      const accountId = await makeAccount()
+      await surveyResultCollection.insertMany([{
+        surveyId: ObjectId.createFromHexString(surveyId),
+        accountId: ObjectId.createFromHexString(accountId),
+        answer: 'any_answer_1',
+        date: new Date()
+      }, {
+        surveyId: ObjectId.createFromHexString(surveyId),
+        accountId: ObjectId.createFromHexString(accountId),
+        answer: 'any_answer_1',
+        date: new Date()
+      }, {
+        surveyId: ObjectId.createFromHexString(surveyId),
+        accountId: ObjectId.createFromHexString(accountId),
+        answer: 'any_answer_2',
+        date: new Date()
+      }, {
+        surveyId: ObjectId.createFromHexString(surveyId),
+        accountId: ObjectId.createFromHexString(accountId),
+        answer: 'any_answer_2',
+        date: new Date()
+      }])
+      const sut = makeSut()
+      const surveyResult = await sut.loadBySurveyId(surveyId, accountId)
+      expect(surveyResult).toBeTruthy()
+      expect(surveyResult.answers[0].count).toBe(2)
+      expect(surveyResult.answers[0].percent).toBe(50)
+      expect(surveyResult.answers[1].count).toBe(2)
+      expect(surveyResult.answers[1].percent).toBe(50)
+      expect(surveyResult.answers[2].count).toBe(0)
+      expect(surveyResult.answers[2].percent).toBe(0)
     })
   })
 })
