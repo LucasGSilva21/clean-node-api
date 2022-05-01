@@ -11,7 +11,7 @@ let app: Express
 describe('Auth Routes', () => {
   beforeAll(async () => {
     app = await setupApp()
-    await MongoHelper.connect(process.env.MONGO_URL as string)
+    await MongoHelper.connect(process.env.MONGO_URL)
   })
 
   afterAll(async () => {
