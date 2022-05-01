@@ -25,7 +25,6 @@ export class DbLoadSurveyResult implements LoadSurveyResult {
       answers: survey.answers.map(answer => Object.assign({}, answer, {
         count: 0,
         percent: 0
-        // isCurrentAccountAnswer: false
       }))
     }
   }
