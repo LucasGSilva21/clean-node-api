@@ -82,5 +82,22 @@ describe('Survey Result Routes', () => {
         .get('/api/surveys/any_id/results')
         .expect(403)
     })
+
+    test('Should return 200 on save survey result with access token', async () => {
+      const res = await surveyCollection.insertOne({
+        question: 'any_question',
+        answers: [{
+          image: 'any_image',
+          answer: 'any_answer'
+        }],
+        date: new Date()
+      })
+      const id = res.insertedId.toHexString()
+      const accessToken = await makeAccessToken()
+      await request(app)
+        .get(`/api/surveys/${id}/results`)
+        .set('x-access-token', accessToken)
+        .expect(200)
+    })
   })
 })
